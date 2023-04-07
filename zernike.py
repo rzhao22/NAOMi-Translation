@@ -17,21 +17,16 @@
 import numpy as np
 from scipy.special import gamma
 
-def zernike(i,x,y):
+def cart2pol(x, y):
+  rho = np.sqrt(x ** 2 + y ** 2)
+  phi = np.arctan2(y, x)
+  return (rho, phi)
 
-  [theta, r] = cart2pol(x, y)
-  n = zidx(i,1)
-  m = zidx(i,2)
-  if m == 0:
-    Z = np.sqrt(n + 1) * zrf(n, 0, r)
-  else:
-    if np.mod(i,2) == 0:
-      Z = np.sqrt(2*(n+1))*zrf(n,m,r) * np.cos(m*theta)
-    else:
-      Z = np.sqrt(2*(n+1)) * zrf(n,m,r) * np.sin(m*theta)
-  return Z
+def pol2cart(rho, phi):
+  x = rho * np.cos(phi)
+  y = rho * np.sin(phi)
+  return (x, y)
 
-# Zernike radial function
 def zrf(n, m, r):
   R = 0
   for s in range(0 , (n-m)/2):
@@ -47,13 +42,18 @@ def zidx(i,j):
     out = np.mod(idx+1,2) *2.* np.floor((i-(idx+1) * idx/2)/2) + np.mod(idx,2) * (2 * np.ceil((i-(idx+1) * idx/2)/2)-1)
   return out
 
-def cart2pol(x, y):
-  rho = np.sqrt(x ** 2 + y ** 2)
-  phi = np.arctan2(y, x)
-  return (rho, phi)
+def zernike(i,x,y):
+
+  [theta, r] = cart2pol(x, y)
+  n = zidx(i,1)
+  m = zidx(i,2)
+  if m == 0:
+    Z = np.sqrt(n + 1) * zrf(n, 0, r)
+  else:
+    if np.mod(i,2) == 0:
+      Z = np.sqrt(2*(n+1))*zrf(n,m,r) * np.cos(m*theta)
+    else:
+      Z = np.sqrt(2*(n+1)) * zrf(n,m,r) * np.sin(m*theta)
+  return Z
 
 
-def pol2cart(rho, phi):
-  x = rho * np.cos(phi)
-  y = rho * np.sin(phi)
-  return (x, y)
