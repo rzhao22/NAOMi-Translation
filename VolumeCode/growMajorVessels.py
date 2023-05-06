@@ -1,9 +1,9 @@
 import numpy as np
-import gennode
-import branchGrowNodes
-import vessel_dijkstra
-import pseudoRandSample2D
-import delnode
+import gennode as gennode
+import branchGrowNodes as branchGrowNodes
+import vessel_dijkstra as vessel_dijkstra
+import pseudoRandSample2D as pseudoRandSample2D
+import delnode as delnode
 
 def growMajorVessels(nv, node_p, vp):
 ##function [nodes,nv] = growMajorVessels(nv,np,vp)

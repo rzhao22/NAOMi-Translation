@@ -1,6 +1,6 @@
 import numpy as np
-import check_axon_params
-import check_vol_params
+import check_axon_params as check_axon_params
+import check_vol_params as check_vol_params
 
 def sort_axons(vol_params, axon_params, gp_bgvals, cell_pos):
 
