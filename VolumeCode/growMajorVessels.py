@@ -3,6 +3,7 @@ import gennode
 import branchGrowNodes
 import vessel_dijkstra
 import pseudoRandSample2D
+import delnode
 
 def growMajorVessels(nv, node_p, vp):
 ##function [nodes,nv] = growMajorVessels(nv,np,vp)
@@ -144,10 +145,10 @@ def growMajorVessels(nv, node_p, vp):
 
 
     nodes = nodes[:nv.nnodes]
-    surfidx = np.where(({nodes.type} == 'surf'))
+    surfidx = [i for i, node in enumerate(nodes) if node.type == 'sfvt']
     surfpos = np.reshape([nodes[(({nodes.type}=='surf'))].pos],3,[]).H
     surfpos = np.ravel_multi_index((surfpos[:,0],surfpos[:,1]), nv.size[:1])
-    while (sum(({nodes.type}=='sfvt'))< nv.nvert and sum(neur_vert(surfpos)==0)>0):
+    while (sum(node.type == 'sfvt' for node in nodes)< nv.nvert and sum(neur_vert(surfpos)==0)>0):
         TMPIDX = np.where(neur_vert(surfpos)==0)
         TMPIDX = surfidx(TMPIDX(np.ceil(np.random.rand*len(TMPIDX))))
         nodes(TMPIDX).type = 'sfvt'
@@ -156,7 +157,7 @@ def growMajorVessels(nv, node_p, vp):
         neur_vert = neur_vert+imdilate(TMP,se)
 
     ## Grow diving vessels to bottom of volume
-    vertidx = np.where(({nodes.type}=='sfvt'))
+    vertidx = [i for i, node in enumerate(nodes) if node.type == 'sfvt']
     TMPIDX = nv.nnodes
     for i in range(len(vertidx)):
         curr_node = vertidx[i]
@@ -169,12 +170,12 @@ def growMajorVessels(nv, node_p, vp):
             nodes[nodes[TMPIDX].root].conn = np.union(nodes[nodes[TMPIDX].root].conn,TMPIDX)
             curr_node = TMPIDX
 
-    nv.nvert = sum(({nodes.type}=='sfvt'))
+    nv.nvert = sum(node.type == 'sfvt' for node in nodes)
     nv.nvertconn = curr_node-nv.nnodes
     nv.nnodes = curr_node
 
     ## End nodes are initialized to a size
-    ends = np.where(cellfun(@length,{nodes.conn})==1)
+    ends = [i for i, node in enumerate(nodes) if len(node.conn) == 1]
     for i in range (len(ends)):
         nodes[ends[i]].misc = vp.vesSize[2]+np.random.gamma(3,(vp.vesSize[1]-vp.vesSize[2])/3) # gamma distribution with shape parameter 3 to set the vessel distribution
 

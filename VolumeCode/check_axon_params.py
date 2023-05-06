@@ -1,5 +1,5 @@
 import numpy as np
-
+from setParams import setParams
 def check_axon_params(axon_params):
 
 ##function axon_params = check_axon_params(axon_params)

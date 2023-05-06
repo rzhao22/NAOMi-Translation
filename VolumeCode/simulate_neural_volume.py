@@ -1,4 +1,20 @@
 import numpy as np
+from check_vol_params import check_vol_params
+from check_vasc_params import check_vasc_params
+from check_neur_params import check_neur_params
+from check_dend_params import check_dend_params
+from check_bg_params import check_bg_params
+from check_axon_params import check_axon_params
+from gaussianBeamSize import gaussianBeamSize
+from simulatebloodvessels import simulatebloodvessels
+from sampleDenseNeurons import sampleDenseNeurons
+from generateNeuralVolume import generateNeuralVolume
+from growNeuronDendrites import growNeuronDendrites
+from growApicalDendrites import growApicalDendrites
+from setCellFluoresence import setCellFluoresence
+from generate_axons import generate_axons
+from generate_bgdendrites import generate_bgdendrites
+from sort_axons import sort_axons
 
 def simulate_neural_volume(vol_params, neur_params, vasc_params,
                  dend_params, bg_params, axon_params, psf_params, *args):
@@ -187,7 +203,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
     if(axon_params.flag):                                                     
         [neur_vol,gp_bgvals, axon_params] = generate_axons(vol_params, axon_params, neur_vol, neur_num, 
                                                             gp_vals, gp_nuc) # Simulate the background/neuropil 
-        axon_params.N_proc = size(gp_vals,1)
+        axon_params.N_proc = np.size(gp_vals,0)
         bg_proc = sort_axons(vol_params, axon_params, gp_bgvals, neur_locs*vol_params.vres)                                                     
         #   bg_proc = correlate_background(vol_params, axon_params, neur_ves, 
         #                                               gp_bgvals, gp_vals, gp_nuc) # Correlate the background components into a smaller number of processes
@@ -200,6 +216,10 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
 
     if (vol_params.verbose >= 1):
         print('Setting up output struct')
+    
+    class Vol_out:
+        pass
+    vol_out = Vol_out()
     
     vol_out.neur_vol     = neur_vol                                           # Position and base fluoresence of neural volume 
     del neur_vol

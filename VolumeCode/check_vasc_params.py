@@ -1,4 +1,5 @@
 import numpy as np
+from setParams import setParams
 def check_vasc_params(vasc_params):
 
 ##function vasc_params = check_vasc_params(vasc_params)

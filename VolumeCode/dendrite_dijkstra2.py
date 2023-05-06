@@ -1,5 +1,5 @@
 import numpy as np
-
+from dendrite_dijkstra_cpp import dendrite_dijkstra_cpp
 ##function [distance,pathfrom] = dendrite_dijkstra2(M,dims,root)
 def dendrite_dijkstra2(M, dims, root):
 
@@ -23,11 +23,13 @@ def dendrite_dijkstra2(M, dims, root):
     try:
         root2 = np.ravel_multi_index((root[0], root[1], root[2]), dims)  #sub2ind(dims,root(1),root(2),root(3))                         # Get index set location of the root node from the subscript location provided
     except:
+        print(root)
         raise ValueError('root')
 
-    # if(~isa(M,'single'))
-    #     warning('M must be a single, casting as a single')
-    #     M = single(M)                                                         # Make sure M is a single
+    if(type(M) != type(np.float32)):
+        M = (M).astype(np.float32)                              # Make sure M is a single
+        raise TypeError('M must be a single, casting as a single')
+        
 
     e  = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]])                        # Set the adjacent edges to loop through: R L U D T B (right/left/up/down/towards/back)
     pe = e*np.array([[1],[dims[0]],[dims[0]*dims[1]]])                                        # Set distance based on dimensions of the volumes

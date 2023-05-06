@@ -2,9 +2,10 @@ import numpy as np
 import math
 import scipy
 from scipy.sparse.linalg import eigs
-import check_neur_params
+from check_neur_params import check_neur_params
+from teardrop_poj import teardrop_poj
 
-def generateNeuralBody(neur_params):
+def generateNeuralBody(neur_params, eo, Vs):
 ##function [Vcell,Vnuc,Tri,a] = generateNeuralBody(neur_params)
 
 # [Vcell,Vnuc,Tri,a] = generateNeuralBody(neur_params)
@@ -59,7 +60,7 @@ def generateNeuralBody(neur_params):
 
     if (((not hasattr(neur_params,'S_samp')) or not neur_params.S_samp) 
           and ((not hasattr(neur_params,'Tri')) or not neur_params.Tri)):              # Check if a sampling is already provided
-        [V,Tri]=SpiralSampleSphere(neur_params.n_samps,False)                 # This function uses a spiral method to sample uniformly on a sphere
+        V,Tri=SpiralSampleSphere(neur_params.n_samps)                 # This function uses a spiral method to sample uniformly on a sphere
     else:
         V   = neur_params.S_samp                                              # If provided, use the provided sampling and triangulation
         Tri = neur_params.Tri
@@ -97,20 +98,20 @@ def generateNeuralBody(neur_params):
         Rtear = neur_params.Rtear                                             # If provided, use the provided means
     # eo.issym  = 1                                                             # Use symmetric flag for eigenvalue finding 
     eo.isreal = 1                                                             # Use real flag for eigenvalue finding
-    min_eig   = 1.03*eigs(dists,1,'SR',eo)                                    # To combat ill conditioning from numerical errors, find the minimum eigenvalue
+    min_eig   = 1.03*eigs(dists,1,'SR',eo) #### check here                                   # To combat ill conditioning from numerical errors, find the minimum eigenvalue
     if min_eig < 0:
-        dists = dists + abs(min_eig)*np.eye(np.size(dists))                         # Find the value that makes sure the covariance is PSD
+        dists = dists + abs(min_eig)*np.eye(dists.shape)                         # Find the value that makes sure the covariance is PSD
     x_bnds = neur_params.exts*neur_params.avg_rad                             # Set bounds for the maximum and minimum radii of the soma shape
     x_base = abs(np.random.multivariate_normal(0*Rtear,dists).T)                                     # Sample from a Gaussian with the correct covariance matrix
     x      = x_base - np.mean(x_base) + neur_params.avg_rad*Rtear                # Re-center the samples 
-    xmin   = min(min(x),x_bnds(1))                                            # Calculate the minimum radius of the current shape
-    x      = (x_bnds(2) - x_bnds(1))*(x - xmin)/(
-        max(max(x),x_bnds(2)) - xmin) + x_bnds(1)  # Renormalize the radii so that the cell isn't ever too big or too small in any direction
+    xmin   = min(min(x),x_bnds[0])                                            # Calculate the minimum radius of the current shape
+    x      = (x_bnds[1] - x_bnds[0])*(x - xmin)/(
+        max(max(x),x_bnds[1]) - xmin) + x_bnds[0]  # Renormalize the radii so that the cell isn't ever too big or too small in any direction
     if (neur_params.neur_type == 'pyr'): 
         x2   = x_base - np.mean(x_base) + neur_params.avg_rad                    # Re-center the samples (now for the nucleus)
-        xmin = min(min(x2),x_bnds(1))                                         # Calculate the minimum radius of the current shape (now for the nucleus)
-        x2   = (x_bnds(2) - x_bnds(1))*(x2 - xmin)/(
-                max(max(x2),x_bnds(2)) - xmin) + x_bnds(1) # Renormalize the radii so that the nucleus isn't ever too big or too small in any direction (now for the nucleus)
+        xmin = min(min(x2),x_bnds[0])                                         # Calculate the minimum radius of the current shape (now for the nucleus)
+        x2   = (x_bnds[1] - x_bnds[0])*(x2 - xmin)/(
+                max(max(x2),x_bnds[1]) - xmin) + x_bnds[0] # Renormalize the radii so that the nucleus isn't ever too big or too small in any direction (now for the nucleus)
     else:
         x2 = x
 
@@ -118,7 +119,7 @@ def generateNeuralBody(neur_params):
     ## Create Elliptical Nucleus
 
     # eccens = ones(1,3)+neur_params.eccen                      # Get ellipse eccentricities
-    eccens = np.ones((1,3))+neur_params.eccen * (np.ranodm.rand(1,3)-[0.5,0.5,0])                      # Get ellipse eccentricities
+    eccens = np.ones((1,3))+neur_params.eccen * (np.random.rand(1,3)-np.array([0.5,0.5,0]))                      # Get ellipse eccentricities
     # eccens = ones(1,3)+neur_params.eccen*(rand(1,3)-0.5)                      # Get ellipse eccentricities
     # eccens = eccens./prod(eccens)
     eccens = eccens/(np.prod(eccens)**(1/3))
@@ -130,8 +131,8 @@ def generateNeuralBody(neur_params):
         Vetear = V * eccens                                      # Create an elliptical shape
         Vetear = Vetear/np.sqrt(np.mean(sum(V**2,2)))                               # Normalize the elliptical shape
 
-    Vcell   = Vetear* x[:]                                    # Multiply through the sampled points to get the samples on the neural surface
-    Vcell   = Vcell + [0, 0, -nucoff]                           # Shift the soma down (for easier modulation of the nucleus)
+    Vcell   = Vetear* x.flatten()                              # Multiply through the sampled points to get the samples on the neural surface
+    Vcell   = Vcell + np.array([0, 0, -nucoff])                           # Shift the soma down (for easier modulation of the nucleus)
     Vnorms  = np.sqrt(sum(Vcell**2,2))                                           # Get soma surface point extents
     # Vnuc    = bsxfun(@times, bsxfun(@times, V, [1,1,-1].*eccens), x2(:))      # Initialize the nucleus to an off-set cell shape
     # Vnorms2 = sqrt(sum(Vnuc.^2,2))                                            # Get soma surface point extents
@@ -140,28 +141,29 @@ def generateNeuralBody(neur_params):
     # Vnorms2 = Vnorms2 + min(Vnorms - Vnorms2) - neur_params.min_thic(1)          # Make sure the nucleus fits inside the soma with the minimum thickness
     # Vnuc    = bsxfun(@times,Vnuc,Vnorms2./ sqrt(sum(Vnuc.^2,2)))              # Apply shrinkage values to soma surface points
 
-    Vnuc    = (V * [1,1,-1]) * x2[:]      # Initialize the nucleus to an off-set cell shape
+    Vnuc    = (V * np.array([1,1,-1])) * x2.flatten()      # Initialize the nucleus to an off-set cell shape
     Vnorms2 = np.sqrt(sum(Vnuc**2,2))                                            # Get soma surface point extents
     Vnorms2 = neur_params.nexts[1]*(neur_params.nexts[0]*(Vnorms2
                     - min(Vnorms2)) + (1-neur_params.nexts[0])*max(Vnorms2))  # Shrink & smooth the nucleus
     Vnorms2 = Vnorms2 + min(Vnorms - Vnorms2) - neur_params.min_thic[0]          # Make sure the nucleus fits inside the soma with the minimum thickness
-    Vnuc    = (Vnuc * eccens) * Vnorms2 / np.sqrt(sum(Vnuc**2,2))              # Apply shrinkage values to soma surface points
+    Vnuc    = (Vnuc * eccens) * Vnorms2 / np.sqrt(sum(Vnuc**2,1))              # Apply shrinkage values to soma surface points
 
     lat_ang = np.random.rand(1)*2*np.pi
     lat_shft = (1-abs(np.random.rand(1)-np.random.rand(1)))*neur_params.min_thic[1]*[math.sin(lat_ang), math.cos(lat_ang)]
     # lat_shft = rand(1)*neur_params.min_thic(2)*[sin(lat_ang), cos(lat_ang)]
 
-    Vcell   = Vcell + [0, 0, nucoff]                            # Shift the soma up
-    Vnuc    = Vnuc + [lat_shft[0], lat_shft[1], nucoff]                             # Shift the nucleus up
+    Vcell   = Vcell + np.array([0, 0, nucoff])                            # Shift the soma up
+    Vnuc    = Vnuc + np.array([lat_shft[0], lat_shft[1], nucoff])                             # Shift the nucleus up
 
     # Vcell   = bsxfun(@plus, Vcell, [0, 0, nucoff])                            # Shift the soma up
     # Vnuc    = bsxfun(@plus, Vnuc, [0, 0, nucoff])                             # Shift the nucleus up
 
     # Optional scaling of nucleus size to adjust to normalized radius
     if (hasattr(neur_params,'nuc_rad') and not (neur_params.nuc_rad)):
-        [_,VnucSz] = scipy.spatial.ConvexHull(Vnuc[:,0],Vnuc[:,1],Vnuc[:,2])
+        hull = scipy.spatial.ConvexHull(Vnuc[:,0],Vnuc[:,1],Vnuc[:,2])
+        VnucSz = hull.volume
         nucsz = (4/3)*np.pi*(neur_params.nuc_rad[0]**3)
-        if (len(neur_params.nuc_rad)>1):
+        if (max(neur_params.nuc_rad.shape)>1):
             Vnuc = Vnuc*(((nucsz/VnucSz)**(1/3))**(1/neur_params.nuc_rad[1]))
         else:
             Vnuc = Vnuc*((nucsz/VnucSz)**(1/3))
@@ -171,7 +173,7 @@ def generateNeuralBody(neur_params):
         max_ang = 20
     else:
         max_ang = neur_params.max_ang
-    a     = -abs(max_ang)+2*abs(max_ang)*np.ranodm.rand(1,3)                            # Choose a random rotation angle
+    a     = -abs(max_ang)+2*abs(max_ang)*np.random.rand(1,3)                            # Choose a random rotation angle
     Rx    = np.array([[1, 0, 0], [0, cosd(a[0]), -sind(a[0])], [0, sind(a[0]), cosd(a[0])]])        # ... Rotation around x
     Ry    = np.array([[cosd(a[1]), 0, sind(a[1])], [0, 1, 0], [-sind(a[1]), 0, cosd(a[1])]])        # ... Rotation around y
     Rz    = np.array([[cosd(a[2]), -sind(a[2]), 0], [sind(a[2]), cosd(a[2]), 0], [0, 0, 1]])        # ... Rotation around z
@@ -197,4 +199,33 @@ def cosd(x):
     y[mask] = 0
     return y
 
-                            
+def SpiralSampleSphere(n, flag=True):
+    inc = np.pi * (3 - np.sqrt(5))
+    off = 2 / float(n)
+    phi = 0
+    theta = 0
+    points = np.zeros((n, 3))
+    for i in range(n):
+        y = i * off - 1 + (off / 2)
+        r = np.sqrt(1 - y*y)
+        phi = phi + inc
+        if phi > 2*np.pi:
+            phi = phi - (2*np.pi)
+            theta = theta + inc
+        x = np.cos(phi) * r
+        z = np.sin(phi) * r
+        points[i] = [x, y, z]
+    tri = np.zeros(((n-2)*3, 3), dtype=int)
+    k = 0
+    for i in range(1, n-1):
+        tri[k] = [i, i+1, 0]
+        k = k + 1
+    tri[k] = [n-1, 1, 0]
+    k = k + 1
+    for i in range(1, n-2):
+        tri[k] = [i, i+1, i+2]
+        k = k + 1
+    if flag:
+        return points, tri
+    else:
+        return points

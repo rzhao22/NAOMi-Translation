@@ -1,4 +1,6 @@
 import numpy as np
+import check_axon_params
+import check_vol_params
 
 def sort_axons(vol_params, axon_params, gp_bgvals, cell_pos):
 
@@ -75,14 +77,14 @@ def sort_axons(vol_params, axon_params, gp_bgvals, cell_pos):
         print('Sorting axons...')
     
 
-    bg_proc  = cell(N_proc,2)                                                 # Initialize the cell array to store the background processes
-    if(np.size(bg_proc,0)>vol_params.N_neur+vol_params.N_den):
+    bg_proc  = [[None for j in range(2)] for i in range(N_proc)]                                                 # Initialize the cell array to store the background processes
+    if(len(bg_proc)>vol_params.N_neur+vol_params.N_den):
         N_comps = vol_params.N_neur+vol_params.N_den
-        gp_bgpos = np.zeros((np.size(gp_bgvals,0),3))
-        for kk in range(np.size(gp_bgvals,0)):
+        gp_bgpos = np.zeros((len(gp_bgvals),3))
+        for kk in range(len(gp_bgvals)):
             del TMP_pos
-            if gp_bgvals{kk,1}:
-                [TMP_pos[:,0],TMP_pos[:,1],TMP_pos[:,2]] = np.unravel_index(gp_bgvals{kk,1}, vol_sz)
+            if gp_bgvals[kk][0]:
+                [TMP_pos[:,0],TMP_pos[:,1],TMP_pos[:,2]] = np.unravel_index(gp_bgvals[kk][0], vol_sz)
                 gp_bgpos[kk,:] = np.mean(TMP_pos)
             
         
@@ -95,23 +97,23 @@ def sort_axons(vol_params, axon_params, gp_bgvals, cell_pos):
         for ii in range(N_comps):
             [_,idx] = min(dist_mat[ii,:])
             dist_mat[:,idx] = np.Inf
-            bg_proc{ii,1} = gp_bgvals{idx,1}
-            bg_proc{ii,2} = gp_bgvals{idx,2}
+            bg_proc[ii][0] = gp_bgvals[idx][0]
+            bg_proc[ii][1] = gp_bgvals[idx][1]
             idxlist[ii] = idx
         
 
-        for kk in range(np.size(gp_bgvals, 0)):
-            if(~ismember(kk,idxlist)):
+        for kk in range(len(gp_bgvals)):
+            if(kk not in idxlist):
                 index = N_comps+np.ceil((N_proc-N_comps)*np.random.rand)
-                bg_proc{index,1} = np.concatenate(bg_proc{index,1},gp_bgvals{kk,1}, axis=0)
-                bg_proc{index,2} = np.concatenate(bg_proc{index,2},gp_bgvals{kk,2}, axis=0)
+                bg_proc[index][0] = np.concatenate(bg_proc[index][0],gp_bgvals[kk][0], axis=0)
+                bg_proc[index][1] = np.concatenate(bg_proc[index][1],gp_bgvals[kk][1], axis=0)
             
         
     else:
-        for kk in range(np.size(gp_bgvals, 0)):
+        for kk in range(len(gp_bgvals)):
             index = np.ceil(N_proc*np.random.rand)
-            bg_proc{index,1} = np.concatenate(bg_proc{index,1},gp_bgvals{kk,1}, axis=0)
-            bg_proc{index,2} = np.concatenate(bg_proc{index,2},gp_bgvals{kk,2}, axis=0)
+            bg_proc[index][0] = np.concatenate(bg_proc[index][0],gp_bgvals[kk][0], axis=0)
+            bg_proc[index][1] = np.concatenate(bg_proc[index][1],gp_bgvals[kk][1], axis=0)
         
     
     if (vol_params.verbose > 0):    
