@@ -17,18 +17,17 @@ def setParams(dParams, paramsIn):
     if not paramsIn:
         return
 
-    fnames = fieldnames(paramsIn)
-    for f in range(len(fnames)):
-        if isfield(paramsOut, fnames{f}):
-            if isstruct(paramsOut.(fnames{f})):
-                val = setParams(paramsOut.(fnames{f}), paramsIn.(fnames{f}))
+    fnames = paramsIn.__dict__.keys()
+    for fname in fnames:
+        if hasattr(paramsOut, fname):
+            attr = getattr(paramsOut, fname)
+            if isinstance(attr, dict):
+                val = setParams(attr, getattr(paramsIn, fname))
             else:
-                val = paramsIn.(fnames{f})
-            
-            paramsOut.(fnames{f}) = val
+                val = getattr(paramsIn, fname)
+            setattr(paramsOut, fname, val)
         else:
-            paramsOut.(fnames{f}) = paramsIn.(fnames{f})
-        
+            setattr(paramsOut, fname, getattr(paramsIn, fname))
     
 
     return paramsOut
