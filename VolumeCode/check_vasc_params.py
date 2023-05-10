@@ -1,5 +1,11 @@
 import numpy as np
+import sys
+import inspect
+
+# adding misc folder to the system path
+sys.path.insert(0, './misc')
 from setParams import setParams
+
 def check_vasc_params(vasc_params):
 
 ##function vasc_params = check_vasc_params(vasc_params)
@@ -58,26 +64,27 @@ def check_vasc_params(vasc_params):
 #
 ###########################################################################
 ## Run the checks
+    class Vasc_params:
+        def __init__(self,flag,ves_shift,depth_vasc,depth_surf,distWeightScale,randWeightScale
+            ,cappAmpScale,cappAmpZscale,vesSize,vesFreq,sourceFreq,vesNumScale,sepweight,distsc):
+            self.flag = flag                                                          # amount of wobble allowed for blood vessels
+            self.ves_shift       = ves_shift                                        # amount of wobble allowed for blood vessels
+            self.depth_vasc      = depth_vasc                                             # depth into tissue for which vasculature is simulated
+            self.depth_surf      = depth_surf                                              # depth into tissue of surface vasculature
+            self.distWeightScale = distWeightScale                                               # scaling factor for weight of node distance scaling
+            self.randWeightScale = randWeightScale                                             # scaling factor for weight of nodes (additional variability)
+            self.cappAmpScale    = cappAmpScale                                             # scaling factor for weights (capillaries, lateral)
+            self.cappAmpZscale   = cappAmpZscale                                             # scaling factor for weights (capillaries, axial)
+            self.vesSize         = vesSize                                        # vessel radius (surface, axial, capillaries) in um
+            self.vesFreq         = vesFreq                                    # vessel freqency in microns
+            self.sourceFreq      = sourceFreq                                            # 
+            self.vesNumScale     = vesNumScale                                             # vessel number random scaling factor
+            self.sepweight       = sepweight                                            #
+            self.distsc          = distsc
 
-    if not vasc_params:                                                    # Make sure that vasc_params is a struct
+    if not inspect.isclass(vasc_params):                                                    # Make sure that vasc_params is a struct
         del vasc_params
-        class Vasc_params:
-            def __init__(self,flag,ves_shift,depth_vasc,depth_surf,distWeightScale,randWeightScale
-                ,cappAmpScale,cappAmpZscale,vesSize,vesFreq,sourceFreq,vesNumScale,sepweight,distsc):
-                self.flag = flag                                                          # amount of wobble allowed for blood vessels
-                self.ves_shift       = ves_shift                                        # amount of wobble allowed for blood vessels
-                self.depth_vasc      = depth_vasc                                             # depth into tissue for which vasculature is simulated
-                self.depth_surf      = depth_surf                                              # depth into tissue of surface vasculature
-                self.distWeightScale = distWeightScale                                               # scaling factor for weight of node distance scaling
-                self.randWeightScale = randWeightScale                                             # scaling factor for weight of nodes (additional variability)
-                self.cappAmpScale    = cappAmpScale                                             # scaling factor for weights (capillaries, lateral)
-                self.cappAmpZscale   = cappAmpZscale                                             # scaling factor for weights (capillaries, axial)
-                self.vesSize         = vesSize                                        # vessel radius (surface, axial, capillaries) in um
-                self.vesFreq         = vesFreq                                    # vessel freqency in microns
-                self.sourceFreq      = sourceFreq                                            # 
-                self.vesNumScale     = vesNumScale                                             # vessel number random scaling factor
-                self.sepweight       = sepweight                                            #
-                self.distsc          = distsc
+        
         vasc_params = Vasc_params(1,np.array([5,15,5]),200,15,2,0.1,0.5,0.5,np.array([15,9,2]),np.array([125,200,50]),1000,0.2,0.75,4)
                  
 
@@ -98,17 +105,19 @@ def check_vasc_params(vasc_params):
     dParams = Vasc_params(1,np.array([5,15,5]),200,15,2,0.1,0.5,0.5,np.array([15,9,2]),np.array([125,200,50]),1000,0.2,0.75,4)
     vasc_params = setParams(dParams,vasc_params)
 
+    class Node_params:
+        def __init__(self,maxit,lensc,varsc,mindist,varpos,dirvar,branchp,vesrad):
+            self.maxit   = maxit
+            self.lensc   = lensc
+            self.varsc   = varsc
+            self.mindist = mindist
+            self.varpos  = varpos
+            self.dirvar  = dirvar
+            self.branchp = branchp
+            self.vesrad  = vesrad
+
     if (not hasattr(vasc_params,'node_params')) or not vasc_params.node_params: # Check if the node parameter sub-struct exists. If not - make it
-        class Node_params:
-            def __init__(self,maxit,lensc,varsc,mindist,varpos,dirvar,branchp,vesrad):
-                self.maxit   = maxit
-                self.lensc   = lensc
-                self.varsc   = varsc
-                self.mindist = mindist
-                self.varpos  = varpos
-                self.dirvar  = dirvar
-                self.branchp = branchp
-                self.vesrad  = vesrad
+       
         vasc_params.node_params = Node_params(25,50,15,10,5,np.pi/8,0.02,25)
         # vasc_params.node_params.maxit   = 25                                                # Maximum iteration to place nodes
         # vasc_params.node_params.lensc   = 50                                                # 
@@ -147,3 +156,7 @@ def check_vasc_params(vasc_params):
 
 ###########################################################################
 ###########################################################################
+
+# testing
+if __name__ == "__main__":
+    print(check_vasc_params(np.array([1])).node_params.vesrad)

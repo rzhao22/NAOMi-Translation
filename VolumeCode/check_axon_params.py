@@ -1,5 +1,11 @@
 import numpy as np
+import sys
+import inspect
+
+# adding misc folder to the system path
+sys.path.insert(0, './misc')
 from setParams import setParams
+
 def check_axon_params(axon_params):
 
 ##function axon_params = check_axon_params(axon_params)
@@ -43,27 +49,28 @@ def check_axon_params(axon_params):
 ###########################################################################
 ## Run the checks
 
-    if not axon_params:                                                    # Make sure that axon_params is a struct
-        del axon_params
-        class Axon_params:
+    class Axon_params:
 
-            def __init__(self,flag,distsc,fillweight,maxlength,minlength,maxdist,maxel,varfill,maxvoxel,padsize,numbranches,varbranches,maxfill,N_proc,l,rho):
-                self.flag        = flag
-                self.distsc      = distsc
-                self.fillweight  = fillweight
-                self.maxlength   = maxlength
-                self.minlength   = minlength
-                self.maxdist     = maxdist
-                self.maxel       = maxel
-                self.varfill     = varfill                                               # variation in filling weight (std around 1)
-                self.maxvoxel    = maxvoxel                                                   # Maximum number of elements per voxel
-                self.padsize     = padsize                                                  # Background padding size (for smoothness in background)
-                self.numbranches = numbranches
-                self.varbranches = varbranches
-                self.maxfill     = maxfill
-                self.N_proc      = N_proc
-                self.l           = l
-                self.rho         = rho
+        def __init__(self,flag,distsc,fillweight,maxlength,minlength,maxdist,maxel,varfill,maxvoxel,padsize,numbranches,varbranches,maxfill,N_proc,l,rho):
+            self.flag        = flag
+            self.distsc      = distsc
+            self.fillweight  = fillweight
+            self.maxlength   = maxlength
+            self.minlength   = minlength
+            self.maxdist     = maxdist
+            self.maxel       = maxel
+            self.varfill     = varfill                                               # variation in filling weight (std around 1)
+            self.maxvoxel    = maxvoxel                                                   # Maximum number of elements per voxel
+            self.padsize     = padsize                                                  # Background padding size (for smoothness in background)
+            self.numbranches = numbranches
+            self.varbranches = varbranches
+            self.maxfill     = maxfill
+            self.N_proc      = N_proc
+            self.l           = l
+            self.rho         = rho
+
+    if not inspect.isclass(axon_params):                                                    # Make sure that axon_params is a struct
+        del axon_params
         axon_params = Axon_params(1,0.5,100,200,10,100,8,0.3,6,20,20,5,0.5,10,25,0.1)
     
 
@@ -91,3 +98,8 @@ def check_axon_params(axon_params):
 
 ###########################################################################
 ###########################################################################
+
+## testing
+if __name__ == "__main__":
+    A = np.array([1])
+    print(check_axon_params(A).l)
