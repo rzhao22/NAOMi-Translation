@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import fft
-# function [gp_tmp,varargout] = masked_3DGP_test(grid_sz, l_scale, p_scale, mu, bin_mask, threshold, l_weights,type)
+# masked_3DGP_test(grid_sz, l_scale, p_scale, mu, bin_mask, threshold, l_weights,type)
+# return gp_tmp
 
 def masked_3DGP_test(grid_sz, l_scale, p_scale, mu, bin_mask=1, threshold=1e-10, l_weights=1,type='single'):
 

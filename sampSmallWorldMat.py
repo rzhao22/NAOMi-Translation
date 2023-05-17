@@ -2,11 +2,11 @@ import numpy as np
 import math
 import random
 from scipy.linalg import toeplitz
-# function adj_mat = sampSmallWorldMat(N_node, K_conn, beta, varargin)
+
 def sampSmallWorldMat(N_node=100, K_conn=math.ceil(2*np.log(100)), beta=0.2, *args):
 
-    # adj_mat = sampSmallWorldMat(N_nodes, K_conn, beta {rand_opt, self_ex,
-    #                                                                  n_locs}) 
+    # sampSmallWorldMat(N_nodes, K_conn, beta {rand_opt, self_ex, n_locs}) 
+    # return adj_mat
     # 
     # Create a random small-world graph using the Watts-Strogatz model for
     # small world graphs. There is the extra options to make the connections

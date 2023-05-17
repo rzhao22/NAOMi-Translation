@@ -1,12 +1,9 @@
 import numpy as np
 def setParams(dParams, paramsIn):
-# function paramsOut = setParams(dParams, paramsIn)
-
-    # paramsOut = setParams(dParams, paramsIn)
+    # setParams(dParams, paramsIn)
+    # return paramsOut
     #
-    #  paramsOut = setParams(dParams, paramsIn)
-    #
-    #  The output params struct will include the fields of dParams and paramsIn.
+    #  The output params class instance will include the fields of dParams and paramsIn.
     #  If the same field exists in both of them, the value will be taken from 'paramsIn'
     #
     #

@@ -1,6 +1,7 @@
 import numpy as np
 import warnings
-# function N = nearest_small_prime(N,P)
+# nearest_small_prime(N,P)
+# return the nearest small prime
 def nearest_small_prime(N,P = 7):
 
     # N = nearest_small_prime(N,P)
@@ -20,7 +21,7 @@ def nearest_small_prime(N,P = 7):
 
     if np.size(N) > 1:
         for kk in range(np.size(N)):
-            N[kk] = nearest_small_prime(N[kk],P);                              # If a vector of values is given, find the 
+            N[kk] = nearest_small_prime(N[kk],P)                               # If a vector of values is given, find the 
         
     else:
         if abs(N-round(N))>1e-3:                                               # Test that N is an integer (or close to it)

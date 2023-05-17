@@ -1,6 +1,7 @@
 import numpy as np
 import vec
-# function roc = genAlgorithmPairROC(cnmf,pcaica,suite2p,est,varargin)
+# genAlgorithmPairROC(cnmf,pcaica,suite2p,est,*args)
+# return roc
 def genAlgorithmPairROC(cnmf, pcaica, suite2p, est, *args):
     ###########################################################################
     ## Input parsing
@@ -33,6 +34,11 @@ def genAlgorithmPairROC(cnmf, pcaica, suite2p, est, *args):
     suite2pTT = vec(sum(sum(suite2p.compSpatial > 0))) * (-np.median(suite2p.compTimecourse,axis = 1) + suite2p.compTimecourse)
     # suite2pTT = bsxfun(@times, vec(sum(sum(suite2p.compSpatial>0))), suite2p.compTimecourse);
     # suite2pTT = bsxfun(@plus,  -median(suite2pTT,2), suite2pTT);
+
+    # define an empty class for storing roc
+    class Roc:
+        pass
+    roc = Roc()
 
     roc.max.cnmf      = max(max(cnmfTT))
     roc.max.suite2p   = max(max(suite2pTT))

@@ -1,11 +1,10 @@
 import numpy as np
 
-# function est2 = constrainEstToSomas(est,sL)
 def constrainEstToSomas(est,sL):
 
-# est2 = constrainEstToSomas(est,sL)
-# 
-# Function to constrain the est data struct to a subset of profiles
+# constrainEstToSomas(est,sL)
+# return est2
+# Function to constrain the est class to a subset of profiles
 # that represent, for example, somatic components.
 # 
 # 2020 - Adam Charles
@@ -14,9 +13,11 @@ def constrainEstToSomas(est,sL):
     tmpSL[sL] = True
 ########################################################################################################################
     ## First: indexing hell
-
-    est2.estactIdxs      = tmpSL&est.estactIdxs                             # Full logical list of global components to keep
-    est2.estactidealIdxs = tmpSL&est.estactidealIdxs                        # |- Same for ideal 
+    class Est2:
+        pass
+    est2 = Est2()
+    est2.estactIdxs      = tmpSL and est.estactIdxs                             # Full logical list of global components to keep
+    est2.estactidealIdxs = tmpSL and est.estactidealIdxs                        # |- Same for ideal 
 
     est2.Idxs            = np.empty(est2.estactIdxs.shape).fill(np.nan)     # Create nan list
     est2.idealIdxs       = np.empty(est2.estactidealIdxs.shape).fill(np.nan)# |- Same for ideal
@@ -40,6 +41,7 @@ def constrainEstToSomas(est,sL):
     est2.corrSortIdeal = np.sort(est2.corrvalsIdeal,'descend')
     IXC                = np.argsort(est2.corrvalsIdeal,'descend')
     est2.corrIdxsIdeal       = est2.idealIdxs[IXC]
+    return est2
 
 # x - estact
 # x - estactIdxs
