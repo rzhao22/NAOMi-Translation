@@ -19,15 +19,9 @@ from sort_axons import sort_axons
 def simulate_neural_volume(vol_params, neur_params, vasc_params,
                  dend_params, bg_params, axon_params, psf_params, *args):
 
-
-
-# function [vol_out,vol_params,neur_params,vasc_params,dend_params,bg_params,
-#     axon_params] = simulate_neural_volume(vol_params, neur_params, 
-#     vasc_params, dend_params, bg_params, axon_params, psf_params, varargin)
-
-# [vol_out,vol_params,neur_params,vasc_params,dend_params,axon_params] 
-#  = simulate_neural_volume(vol_params, neur_params, vasc_params, 
+# simulate_neural_volume(vol_params, neur_params, vasc_params, 
 #                                 dend_params, bg_params, axon_params, debug_opt) 
+# return vol_out,vol_params,neur_params,vasc_params,dend_params,axon_params
 #
 # Function to create a volume. This is the main function to create a neural
 # volume, inclusive of neural somas and dendrites, vasculature, and
@@ -36,7 +30,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
 # activity to be scanned in simulation. 
 # 
 # The inputs to this function are:
-#   - vol_params  - Struct containing parameters for the volume generation
+#   - vol_params  - Class instance containing parameters for the volume generation
 #       .vol_sz   - 3-element vector with the size (in um) of the volume to
 #                   generate (default = 100x100x30um)
 #       .min_dist - Minimum distance between neurons (default = 15um)
@@ -52,7 +46,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
 #                   generation. Can be 0,1,2. 0 = no text updates, 1 = some
 #                   some text outputs. 2 = detailed text outputs (default =
 #                   1)
-#   - neur_params - Struct containing parameters for neuron generation
+#   - neur_params - Class instance containing parameters for neuron generation
 #       .n_samps  - Number of sphere samples to use in creating the mesh
 #                   for generating soma and nucleus shapes (default = 1000)
 #       .l_scale  - length-scale for the isotropic GP of the soma shapes.
@@ -64,7 +58,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
 #                      0.3)
 #       .min_thic - Minimum cytoplasmic thickness (default = 1)
 #       .eccen    - Maximum eccentricity of neuron (default = 0.25)
-#   - vasc_params - Struct containing parameters for vasculature simulation
+#   - vasc_params - Class instance containing parameters for vasculature simulation
 #       .ves_shift       - 3-vector of the amount of wobble allowed for
 #                          blood vessels (default = [30 15 15] um)
 #       .depth_vasc      - Depth into tissue for which vasculature is
@@ -85,7 +79,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
 #                          [250 150 65] um) 
 #       .vesNumScale     - blood vessel number random scaling factor
 #                          (default = 0.2) 
-#   - dend_params - Struct containing parameters for dendrite simulation
+#   - dend_params - Class instance containing parameters for dendrite simulation
 #       .dtParams        - dendritic tree number,radius in um of branches
 #                          (uniform across circle),radius in um of branches
 #                          (uniform in z) (default = [35 100 50 1])
@@ -102,7 +96,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
 #       .dims            - dims set at 10 um per space (default = [20 20 20])
 #       .dimsSS          - dims subsampling factor (10 samples per dim
 #                          grid) (default = [10 10 10]) 
-#   - axon_params   - axon_params   - Struct containing parameters for background generation
+#   - axon_params   - Class instance containing parameters for background generation
 #       .distvar         - (default = 5)
 #       .distscale       - (default = 2)
 #       .nanchors        - (default = 5)
@@ -111,7 +105,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
 #                   outputs and maximum verbosity - default = false)
 #
 # The outputs of this function are:
-#   - vol_out     - Output struct containint the following quantitites:
+#   - vol_out     - Output Class instance containint the following quantitites:
 #       .neur_vol - Fluorescence over the entire volume
 #       .gp_vals  - Cellular fluorescence distribution
 #       .gp_back  - Extra-cellular fluorescence distribution
@@ -259,7 +253,7 @@ def simulate_neural_volume(vol_params, neur_params, vasc_params,
         print('done.\n')
     
 
-    return [vol_out,vol_params,neur_params,vasc_params,dend_params,bg_params,axon_params]
+    return vol_out,vol_params,neur_params,vasc_params,dend_params,bg_params,axon_params
 
 ###########################################################################
 ###########################################################################

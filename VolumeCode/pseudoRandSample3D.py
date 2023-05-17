@@ -1,9 +1,9 @@
 import numpy as np
 
 def pseudoRandSample3D(sz, nsamps, pdf, width = 2, weight = 1):
-## function [pos,pdf] = pseudoRandSample3D(sz, nsamps, width, weight, pdf)
 
-# [pos,pdf] = pseudoRandSample3D(sz, nsamps, width, weight, pdf)
+# pseudoRandSample3D(sz, nsamps, width, weight, pdf)
+# return pos,pdf 
 # 
 # Function to sample pseudo randomly within a 3D array, with partial
 # exclusion of previously sampled locations. The inputs are:
@@ -24,19 +24,9 @@ def pseudoRandSample3D(sz, nsamps, pdf, width = 2, weight = 1):
 # 2017 - Alex Song
 
 ###########################################################################
-    # if(nargin<5):
-    #     pdf = np.ones(sz,'single')
-    if not pdf:
+    if pdf is None:
         pdf = np.ones(sz).astype(np.float32)
 
-
-    # if(nargin<4)
-    # weight = 1
-    # end
-
-    # if(nargin<3)
-    # width = 2
-    # end
 
     X,Y,Z = np.meshgrid(np.linspace(-np.ceil(2*width),np.ceil(2*width)),np.linspace(-np.ceil(2*width),np.ceil(2*width)))
     gpdf = (-weight*np.exp(-(X**2+Y**2+Z**2)/(width**2))).astype(np.float32)
@@ -55,3 +45,4 @@ def pseudoRandSample3D(sz, nsamps, pdf, width = 2, weight = 1):
             pdf[xi[0]:xi[1],yi[0]:yi[1],zi[0]:zi[1]] = pdf[xi[0]:xi[1],yi[0]:yi[1],zi[0]:zi[1]]+gpdf[xc[0]:xc[1],yc[0]:yc[1],zc[0]:zc[1]]
             pos[i,:] = rndpt
             i = i+1
+    return pos, pdf

@@ -4,14 +4,13 @@ import check_vol_params as check_vol_params
 
 def sort_axons(vol_params, axon_params, gp_bgvals, cell_pos):
 
-##function bg_proc = sort_axons(vol_params, axon_params, gp_bgvals, cell_pos)
-
-# bg_proc = sort_axons(vol_params, axon_params, gp_bgvals, cell_pos)
+# sort_axons(vol_params, axon_params, gp_bgvals, cell_pos)
+# return bg_proc
 # 
 # This function ranndomly sorts length(gp_bgvals) axons into N_proc bins
 #
 # The inputs to this function are:
-#   - vol_params - Struct containing parameters for the volume generation
+#   - vol_params - Class instance containing parameters for the volume generation
 #       .vol_sz   - 3-element vector with the size (in um) of the volume to
 #                   generate (default = 100x100x30um)
 #       .min_dist - Minimum distance between neurons (default = 15um)
@@ -26,7 +25,7 @@ def sort_axons(vol_params, axon_params, gp_bgvals, cell_pos):
 #       .verbose  - Level of verbosity in the output during the volume
 #                   generation. Can be 0,1,2. 0 = no text updates, 1 = some
 #                   text outputs. 2 = detailed text outputs (default = 1)
-#   - axon_params   - Struct containing parameters for background generation
+#   - axon_params   - Class instance containing parameters for background generation
 #       .distsc      - Parameter to determine how directed the random walk 
 #                      to generate background processes is Higher values
 #                      are more directed/less random (default = 0.5)
@@ -50,14 +49,14 @@ def sort_axons(vol_params, axon_params, gp_bgvals, cell_pos):
 #                      background processes over the image (default = 25) 
 #       .rho         - Gaussian process variance parameter for correllation
 #                      background processes over the image (default = 0.1) 
-#   - gp_bgvals     - Cell array with number of rows equal to the number of
+#   - gp_bgvals     - Nested list with number of rows equal to the number of
 #                     background processes, which contains the locations and
 #                     values of the processes at those locations
 #   - cell_pos         - Position of cells within the volume
 #
 # 
 # The ouptut to this function is:
-#     bg_proc - The volume structure provided by simulate_neural_vol,
+#     bg_proc - The volume Class instance provided by simulate_neural_vol,
 #               modified to have the background components.
 # 
 # 2017 - Adam Charles and Alex Song

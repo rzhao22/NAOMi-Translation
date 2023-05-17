@@ -1,9 +1,9 @@
 import numpy as np
 from dendrite_dijkstra_cpp import dendrite_dijkstra_cpp
-##function [distance,pathfrom] = dendrite_dijkstra2(M,dims,root)
 def dendrite_dijkstra2(M, dims, root):
 
-# function [distance,pathfrom2] = dendrite_dijkstra2(M,dims,root)
+# function dendrite_dijkstra2(M,dims,root)
+# return distance,pathfrom2
 # 
 # Function to run Dijkstra's algorithm for growing out dendrites. Inputs to
 # the function are

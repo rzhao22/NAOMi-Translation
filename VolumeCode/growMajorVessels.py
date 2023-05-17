@@ -6,14 +6,14 @@ import pseudoRandSample2D as pseudoRandSample2D
 import delnode as delnode
 
 def growMajorVessels(nv, node_p, vp):
-##function [nodes,nv] = growMajorVessels(nv,np,vp)
 
-# [nodes,nv] = growMajorVessels(nv,np,vp)
+# growMajorVessels(nv,np,vp)
+# return nodes,nv
 #
 # Function to sample vasculature locations and setup nodes and connections of
 # vasculature (including connections to penetrating vessels)
 #
-# - nv           - struct for number of vessel parameters
+# - nv           - class instance for number of vessel parameters
 #   .size        - size of volume [px]
 #   .szum        - size of volume [um]
 #   .nsource     - number of source vessels from volume surface
@@ -32,7 +32,7 @@ def growMajorVessels(nv, node_p, vp):
 #   .dirvar      - maximum branching angle
 #   .branchp     - probability of branching surface vasculature
 #   .vesrad      - radius of surface vasculature
-# - vp           - struct for vasculature parameters
+# - vp           - class instance for vasculature parameters
 #   .depth_surf  - Depth into tissue of surface vasculature
 #   .sepweight   - Set weight that guides how far, on average, the
 #                  vasculature nodes are placed
@@ -41,7 +41,7 @@ def growMajorVessels(nv, node_p, vp):
 #   .randWeightScale - scaling factor for weight of nodes (variability)
 #   .maxcappdist - maximum capilliary distance
 #
-# - nodes        - struct array containing blood vessel node information
+# - nodes        - class instance containing blood vessel node information
 #   .num         - identifying number
 #   .root        - root node, if it exists (0 is no root)
 #   .conn        - connecting node(s)
@@ -54,7 +54,7 @@ def growMajorVessels(nv, node_p, vp):
 ###########################################################################
 
     ## Initialize a few points for vertical vessels, Initialize some points in surface for surface vessels
-    ## Create node struct type and grow initial (large) vessels from edges
+    ## Create node class instance and grow initial (large) vessels from edges
     nodes = gennode()                               
     for i in range(nv.nsource):
         TMPIDX = (np.random.rand(1,2) >= [(nv.size[1]/(nv.size[0]+nv.size[1])), 0.5])

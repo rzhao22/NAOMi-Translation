@@ -1,12 +1,12 @@
 import numpy as np
 
 def gennode(num = [], root = [], conn = [], pos = [], type = [], misc = []):
-##function node = gennode(num,root,conn,pos,type,misc)
 
-# node = gennode(num,root,conn,pos,type,misc)
+# gennode(num,root,conn,pos,type,misc)
+# return node
 #
-# Function to create a node struct (branch point of blood vessels).  Nodes 
-# are arranged as a structure array with fields: 
+# Function to create a node class instance (branch point of blood vessels).  Nodes 
+# are arranged as a class instance with fields: 
 #
 #   node.num      - identifying number
 #   node.root     - root node, if it exists (0 is no root)
@@ -18,15 +18,6 @@ def gennode(num = [], root = [], conn = [], pos = [], type = [], misc = []):
 # 2017 - Alex Song
 #
 ###########################################################################
-## Input parsing
-
-# if(nargin<1): num  = []
-# if(nargin<2): root = []
-# if(nargin<3): conn = []
-# if(nargin<4): pos  = []
-# if(nargin<5): type = []
-# if(nargin<6): misc = []
-
 ###########################################################################
 ## Set node values
     class Node:
@@ -38,12 +29,6 @@ def gennode(num = [], root = [], conn = [], pos = [], type = [], misc = []):
             self.type = type
             self.misc = misc
     node = Node(num,root,conn,pos,type,misc)
-    # node.num  = num
-    # node.root = root
-    # node.conn = conn
-    # node.pos  = pos
-    # node.type = type
-    # node.misc = misc
 
     return node
 

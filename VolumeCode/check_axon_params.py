@@ -8,15 +8,14 @@ from setParams import setParams
 
 def check_axon_params(axon_params):
 
-##function axon_params = check_axon_params(axon_params)
-
-# axon_params = check_axon_params(axon_params)
+# check_axon_params(axon_params)
+# return axon_params
 #  
-# This function checks the elements of the struct axon_params to ensure
+# This function checks the elements of the class instance axon_params to ensure
 # that all fields are set. Fields not set are set to a list of default
-# parameters. The struct checked is:
+# parameters. The class instance checked is:
 # 
-#   - axon_params   - Struct containing parameters for axon generation
+#   - axon_params   - Class instance containing parameters for axon generation
 #       .flag        - Flag for generation of background dendrites
 #       .distsc      - Parameter to determine how directed the random walk 
 #                      to generate background processes is Higher values
@@ -73,23 +72,6 @@ def check_axon_params(axon_params):
         del axon_params
         axon_params = Axon_params(1,0.5,100,200,10,100,8,0.3,6,20,20,5,0.5,10,25,0.1)
     
-
-    # dParams.flag        = 1
-    # dParams.distsc      = 0.5
-    # dParams.fillweight  = 100
-    # dParams.maxlength   = 200
-    # dParams.minlength   = 10
-    # dParams.maxdist     = 100
-    # dParams.maxel       = 8
-    # dParams.varfill     = 0.3                                                 # variation in filling weight (std around 1)
-    # dParams.maxvoxel    = 6                                                   # Maximum number of elements per voxel
-    # dParams.padsize     = 20                                                  # Background padding size (for smoothness in background)
-    # dParams.numbranches = 20
-    # dParams.varbranches = 5
-    # dParams.maxfill     = 0.5
-    # dParams.N_proc      = 10
-    # dParams.l           = 25
-    # dParams.rho         = 0.1
     dParams = Axon_params(1,0.5,100,200,10,100,8,0.3,6,20,20,5,0.5,10,25,0.1)
     axon_params = setParams(dParams,axon_params)
         

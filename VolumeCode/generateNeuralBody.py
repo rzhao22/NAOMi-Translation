@@ -6,9 +6,9 @@ from check_neur_params import check_neur_params
 from teardrop_poj import teardrop_poj
 
 def generateNeuralBody(neur_params, eo, Vs):
-##function [Vcell,Vnuc,Tri,a] = generateNeuralBody(neur_params)
 
-# [Vcell,Vnuc,Tri,a] = generateNeuralBody(neur_params)
+# generateNeuralBody(neur_params)
+# return Vcell,Vnuc,Tri,a
 #
 # This function samples a neural shape using an Isotropic Gaussian process
 # on a sphere. The function basically draws a set of points whos
