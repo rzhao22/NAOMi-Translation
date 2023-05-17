@@ -6,9 +6,8 @@ from generateZernike import generateZernike
 from applyZernike import applyZernike
 def generateBA(vol_params, psf_params):
 
-##function Uout2 = generateBA(vol_params,psf_params)
-
-# Uout2 = generateBA(vol_params,psf_params)
+# generateBA(vol_params,psf_params)
+# return Uout2
 #
 # This function generates a Gaussian back aperture intensity profile with 
 # the specified aberrations applied. The inputs are

@@ -1,9 +1,7 @@
 import numpy as np
 def generateGaussianProfile(X, Y, rad, aper, k, fl, offset = [0,0]):
-
-##function Uout = generateGaussianProfile(X,Y,rad,aper,k,fl,offset)
-
-# Uout = generateGaussianProfile(X,Y,rad,aper,k,fl,offset)
+# generateGaussianProfile(X,Y,rad,aper,k,fl,offset)
+# return Uout
 #
 # This function generates a Gaussian back aperture intensity profile with a
 # fixed aperture size with a focused phase fl. The inputs are
@@ -22,9 +20,6 @@ def generateGaussianProfile(X, Y, rad, aper, k, fl, offset = [0,0]):
 # 2017 - Alex Song
 
 ###########################################################################
-
-    # if(nargin<7)
-    #     offset = [0 0]
     
     rho2 = X**2+Y**2
     Uout = np.exp(-((X-offset[0])**2+(Y-offset[1])**2)/(rad**2))                  # Gaussian intensity profile

@@ -3,35 +3,17 @@ import numpy as np
 def gaussian_psf(psflen = 10, Lambda = 0.92, sampling = [0.1,0.1,0.1], matSize = [101,101,1001], theta = 0):
 
 
-##function [psf,x,y,z] = gaussian_psf(psflen,lambda,sampling,matSize,theta)
+##function gaussian_psf(psflen,lambda,sampling,matSize,theta)
+# return psf,x,y,z
 # length is the FWHM (1/e2 over 1.7) of the PSF, lambda is the wavelength,
 # sampling is the spacing between pixels, and matSize is the output psf
 # size. psf is the output, x y and z are the coordinate positions
 # for FWHM axial length, we describe this as where the signal for a
 # particular plane is 1/2 of the central plane
-
-    # if nargin<5
-    # theta = 0
-    
-
-    # if nargin<4
-    # matSize = [101 101 1001]
-    
-
-    # if nargin<3
-    # sampling = [0.1 0.1 0.1]
     
 
     if len(sampling)<3:
         sampling = [sampling[0], sampling[0], sampling[0]]
-    
-
-    # if nargin<2
-    # lambda = 0.92
-    
-
-    # if nargin<1
-    # psflen = 10
     
 
     n = 1

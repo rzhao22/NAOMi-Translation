@@ -1,9 +1,7 @@
 import numpy as np
 def groupzproject(images, groupsize, type = 'mean'):
-
-##function out = groupzproject(images,groupsize,type)
-
-# out = groupzproject(images,groupsize,type)
+# groupzproject(images,groupsize,type)
+# return out
 #
 # Function to project a 3D matrix along the third dimension in groups of
 # the specified size. The inputs are

@@ -1,9 +1,9 @@
 import numpy as np
 
 def tpmSignalscale(tpm_params, psf_params):
-##function Ftavg = tpmSignalscale(tpm_params,psf_params)
 
-# function Ftavg = tpmSignalscale(tpm_params,psf_params)
+# function tpmSignalscale(tpm_params,psf_params)
+# return Ftavg
 # 
 # Function to estimate the 
 # <F(t)> = 1/2*phi*eta*C*delta*gp/f/tau*8*nidx*<P(t)>^2/pi/lambda
