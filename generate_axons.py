@@ -1,9 +1,13 @@
 import time
+from check_vol_params import check_vol_params
+from check_axon_params import check_axon_params
+from dendrite_randomwalk2 import dendrite_randomwalk2
+from scipy.ndimage import binary_dilation
 
 def generate_axons(vol_params, axon_params, neur_vol, neur_num, gp_vals, gp_nuc, neur_vol_flag=1):
 
-# [bg_pix,neur_vol,gp_bgvals, axon_params, vol_params] = ...
-#                      generate_axons(vol_params, axon_params, neur_vol, ...
+# [bg_pix,neur_vol,gp_bgvals, axon_params, vol_params] =  
+#                      generate_axons(vol_params, axon_params, neur_vol,  
 #                                               neur_num, gp_vals, gp_nuc)
 # This function simulates background components. The inputs to this
 # function are:
@@ -82,25 +86,25 @@ def generate_axons(vol_params, axon_params, neur_vol, neur_num, gp_vals, gp_nuc,
   if vol_params.verbose == 1:
     print('Generating background fluorescence.')
   elif vol_params.verbose >1:
-    print('Generating background fluorescence...\n')
+    print('Generating background fluorescence \n')
 
   bg_pix = (neur_num == 0)                                                # Get the locations where the background can be
-  for kk in range(0,gp_nuc.shape[0]):
-    bg_pix[gp_nuc[kk,0]] = 0 # CHANGED CELL BRAKCETS {kk,1} TO NORMAL MATRIX HERE         # Remove any zeros that may be in the nuclii
+  for kk in range(len(gp_nuc)):
+    bg_pix[gp_nuc[kk][0]] = 0           # Remove any zeros that may be in the nuclii
     
-  fillnum   = np.rint((axon_params.maxfill)*(axon_params.maxvoxel)*sum(bg_pix.T.flatten()))   # Set the fill-number for filling the background with processes
+  fillnum   = round((axon_params.maxfill)*(axon_params.maxvoxel)*sum(bg_pix.flatten()))   # Set the fill-number for filling the background with processes
   volsize   = vol_params.vol_sz*vol_params.vres                              # Extract the size of the neural volume
   N_bg      = vol_params.N_bg                                               # Get the number of neurons in the volume
-  gp_bgvals = np.array(N_bg*2).reshape((N_bg,2))                                                  # Initialize an array of background components
+  gp_bgvals = gp_bgvals = [[None]*2 for i in range(N_bg)]                                                  # Initialize an array of background components
 
   if vol_params.verbose >1:                                                   # Optional verbose output
     print('Initializing volume')
   if(neur_vol_flag):
-    neur_vol  = np.zeros(neur_vol.shape)                               # Initialize baseline neural volume
-    for kk in range(gp_vals.shape[0]):
-      neur_vol(gp_vals[kk,1]) = gp_vals[kk,2]                                 # Initialize the new full neural volume to the set neural fluorescences. Do this for somas...
-      if kk <= gp_nuc.shape[0]:
-        neur_vol[gp_nuc[kk,1]]  = gp_nuc[kk,2]                              # ... and nuclei (if needed)
+    neur_vol  = np.zeros(neur_vol.shape).astype('float32')                               # Initialize baseline neural volume
+    for kk in range(len(gp_vals)):
+      neur_vol[gp_vals[kk][1]] = gp_vals[kk][2]                                 # Initialize the new full neural volume to the set neural fluorescences. Do this for somas 
+      if kk <= len(gp_nuc):
+        neur_vol[gp_nuc[kk][1]]  = gp_nuc[kk][2]                              #   and nuclei (if needed)
       if vol_params.verbose >=1:                                                # Optional verbose output
         print('.')
         
@@ -110,13 +114,24 @@ def generate_axons(vol_params, axon_params, neur_vol, neur_num, gp_vals, gp_nuc,
   padsize = axon_params.padsize
   volpad = volsize+2*padsize
 
-  M = np.random.rand(volpad)                         # 
-  M(padarray(bg_pix==0,padsize*[1 1 1],false,'both')) = realmax('single');#IDK WHAT TO DO WITH THIS 
+  M = np.random.rand(volpad).astype('float32')                         # 
+
+  # M(padarray(bg_pix==0,padsize*[1 1 1],false,'both')) = realmax('single');#IDK WHAT TO DO WITH THIS
+  # chatgpt solution below
+  bg_pix = np.array(bg_pix) == 0
+  padsize = [1, 1, 1]  # or any desired padding size
+
+  padded_bg_pix = np.pad(bg_pix, [(padsize[i], padsize[i]) for i in range(3)], mode='constant', constant_values=False)
+  dilated_bg_pix = binary_dilation(padded_bg_pix, iterations=1)
+  M[dilated_bg_pix] = np.finfo(np.float32).max
+
+
+  
 
   if vol_params.verbose >1:                                                  # Optional verbose output
     tic = time.time()
 
-  j      = 1                                                               # Initialize background process count
+  j      = 0                                                               # Initialize background process count
   numit2 = 0
   nummax = 10000
   while((fillnum>0)and(j<=N_bg)and(numit2<nummax)):
@@ -125,10 +140,10 @@ def generate_axons(vol_params, axon_params, neur_vol, neur_num, gp_vals, gp_nuc,
       while((len(bgpts)<axon_params.minlength)and(numit2<nummax)):
           numit2 = numit2+1                                                 # Increment counters of number of trials where there is nowhere to grow
           root   = np.ceil((volpad-2)*np.random.rand(1,3)+1)
-          while(M[root[2][root[0],root[1]]>(axon_params.fillweight*...
+          while(M[[root[0],root[1],root[2]]>(axon_params.fillweight* 
                                                            axon_params.maxvoxel)):
               root = np.ceil((volpad-2)*np.random.rand(1,3)+1)
-          ends   = np.ceil(root + 2*axon_params.maxdist*vol_params.vres*...
+          ends   = np.ceil(root + 2*axon_params.maxdist*vol_params.vres* 
                                                            (rand(1,3)-0.5)) # 
           if(ends[0]>volpad[0]):
                 ends[0] = volpad[0]
@@ -142,23 +157,23 @@ def generate_axons(vol_params, axon_params, neur_vol, neur_num, gp_vals, gp_nuc,
                 ends[1] = 1
           if(ends[2]<1):
                 ends[2] = 1
-          bgpts = dendrite_randomwalk2(M,root,ends,axon_params.distsc,...
-                           axon_params.maxlen,axon_params.fillweight,...
+          bgpts = dendrite_randomwalk2(M,root,ends,axon_params.distsc,
+                           axon_params.maxlength,axon_params.fillweight,
                                      axon_params.maxvoxel,axon_params.minlength)   # 
-      if (bgpts.any()):
-        nbranches  = np.max(0,round(axon_params.numbranches + ...
+      if (bgpts):
+        nbranches  = max(0,round(axon_params.numbranches +
                                              axon_params.varbranches*np.random.randn()))
         for i in range(nbranches):
-          bgpts2   = []
+          bgpts2   = np.array([])
           numit = 0
-          while(len(bgpts2)<axon_params.minlength and numit<100):
+          while(max(bgpts2.shape)<axon_params.minlength and numit<100):
             numit = numit+1
-            root  = bgpts[np.ceil(np.random.rand()*len(bgpts))]
-            while(root[0] == 1 || root[0] == volpad[0] || root[1] == 1 ||...
-                                  root[1] == volpad[1] || root[2] == 1 ||...
+            root  = bgpts[np.ceil(np.random.rand()*max(bgpts.shape)),:]
+            while(root[0] == 1 or root[0] == volpad[0] or root[1] == 1 or
+                                  root[1] == volpad[1] or root[2] == 1 or
                                                        root[2] == volpad[2]):
-              root = bgpts[np.ceil(np.random.rand()*len(bgpts))]
-              ends=np.ceil(root + np.round(2*axon_params.maxdist*...
+              root = bgpts[np.ceil(np.random.rand()*max(bgpts.shape))]
+              ends = np.ceil(root + round(2*axon_params.maxdist*
                                           vol_params.vres*(np.random.rand(1,3)-0.5)))
             if(ends[0]>volpad[0]):
               ends[0] = volpad[0]
@@ -173,35 +188,35 @@ def generate_axons(vol_params, axon_params, neur_vol, neur_num, gp_vals, gp_nuc,
             if(ends[2]<1):
                 ends[2] = 1
 
-            bgpts2 = dendrite_randomwalk2(M,root,ends,axon_params.distsc,...
-                              axon_params.maxlength,axon_params.fillweight,...
+            bgpts2 = dendrite_randomwalk2(M,root,ends,axon_params.distsc,
+                              axon_params.maxlength,axon_params.fillweight,
                                        axon_params.maxvoxel,axon_params.minlength)
-        bgpts = np.array(bgpts,bgpts2)
+        bgpts = np.concatenate((bgpts,bgpts2),axis=0)
         bgpts = bgpts-padsize
-        TMPidxs = (bgpts[:,0]<=0)|(bgpts[:,0]>volsize[0]) ...
-            |(bgpts[:,1]<=0)|(bgpts[:,1]>volsize[1]) ...
-            |(bgpts[:,2]<=0)|(bgpts[:,2]>volsize[2])
-        
-        bgpts[TMPidxs,:] = [] #THIS DOES NOT WORK, NEED TO FIND SOMETHING ELSE TO FILL WITH      
-        if(bgpts.any()):
-           gp_bgvals[j,1] = bgpts[:,0]+(bgpts[:,1]-1)*volsize[0]+...
+        TMPidxs = (bgpts[:,0]<=0)or(bgpts[:,0]>volsize[0])
+            or(bgpts[:,1]<=0)or(bgpts[:,1]>volsize[1])  
+            or(bgpts[:,2]<=0)or(bgpts[:,2]>volsize[2])
+
+        bgpts = np.delete(bgpts,TMPidxs,axis=0)
+        if(bgpts):
+           gp_bgvals[j][0] = bgpts[:,0]+(bgpts[:,1]-1)*volsize[0]+
                                            (bgpts[:,2]-1)*volsize[0]*volsize[1]
-          gp_bgvals[j,2] = (1/axon_params.maxel)*np.ones(bgpts.shape[0],1)* ... 
-                            np.max(0,1+axon_params.varfill*np.random.randn())
+          gp_bgvals[j][1] = (1/axon_params.maxel)*np.ones(bgpts.shape[0],1)* 
+                            max(0,1+axon_params.varfill*np.random.randn())
           fillnum = fillnum-bgpts.shape[0]
           if(neur_vol_flag):
-            neur_vol[gp_bgvals[j,1]] = neur_vol[gp_bgvals[j,1]]+gp_bgvals[j,2]
+            neur_vol[gp_bgvals[j][0]] = neur_vol[gp_bgvals[j][0]]+gp_bgvals[j][1]
           j = j+1;                                                          # Increment background process count
           if vol_params.verbose >1:                                             # Optional verbose output
-          if(j%1000)==0):
-            toc = tim.time()
-            Tdone = tic - toc
-            print('#d (#f seconds).\n',j,Tdone)
+            if(j%1000)==0):
+              toc = tim.time()
+              Tdone = tic - toc
+              print(str(j)+' (' + str(Tdone) + ' seconds).\n')
   if(j>N_bg):
     j = N_bg
     
   vol_params.N_bg = j                                                      # Save the number of background pieces generated
-  gp_bgvals  = gp_bgvals[1:j,:]                                       # Only output the number of components actually generated (initialized to a much more optomistic number)
+  gp_bgvals  = gp_bgvals[:j,:]                                       # Only output the number of components actually generated (initialized to a much more optomistic number)
 
   if not neur_vol_flag:
     neur_vol = []
