@@ -16,8 +16,8 @@ def constrainEstToSomas(est,sL):
     class Est2:
         pass
     est2 = Est2()
-    est2.estactIdxs      = tmpSL and est.estactIdxs                             # Full logical list of global components to keep
-    est2.estactidealIdxs = tmpSL and est.estactidealIdxs                        # |- Same for ideal 
+    est2.estactIdxs      = tmpSL&est.estactIdxs                             # Full logical list of global components to keep
+    est2.estactidealIdxs = tmpSL&est.estactidealIdxs                        # |- Same for ideal 
 
     est2.Idxs            = np.empty(est2.estactIdxs.shape).fill(np.nan)     # Create nan list
     est2.idealIdxs       = np.empty(est2.estactidealIdxs.shape).fill(np.nan)# |- Same for ideal
