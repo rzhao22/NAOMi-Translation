@@ -39,11 +39,11 @@ def markpointproc(CIF,CIFMAX,MKF,TIMEMAX,NUMMAX,MARKDIM,HISTLEN=np.Inf):
     # if nargin < 7 || isempty(HISTLEN)
         # HISTLEN = inf
     # end
-    if not HISTLEN:
+    if HISTLEN is None:
         HISTLEN = np.Inf
 
-    if not CIFMAX:
-        CIFMAX = @(t,ht,hm) deal(CIF(t+eps(t),ht,hm),HISTLEN)
+    if CIFMAX is None:
+        CIFMAX = lambda t, ht, hm: (CIF(t + np.abs(np.spacing(t)), ht, hm), HISTLEN)
     
 
     if math.isinf(TIMEMAX) and math.isinf(NUMMAX):
