@@ -23,7 +23,7 @@ def setup_scan_volume_frame(neur_vol,PSF_struct,scan_params):
         PSF    = PSF_struct.psf                                               # Extract point spread function from PSF class instance
 
     if not inspect.isclass(PSF):                                                          # Get size of the PSF
-        Np1,Np2,Np3 = PSF.shape
+        Np1,Np2,Np3 = PSF.shape                                              # warning! this line is not working, as the "shape" won't work for class instance!
     else:
         TypeError('Unknown input configuration!')
 

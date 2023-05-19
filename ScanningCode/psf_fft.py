@@ -1,5 +1,7 @@
 import numpy as np
 import scipy
+import sys
+sys.path.insert(0, './Misc')
 from nearest_small_prime import nearest_small_prime
 
 def psf_fft(vol_sz, psf, *args):
@@ -51,7 +53,7 @@ def psf_fft(vol_sz, psf, *args):
         try:
             sz = vol_sz + len(psf) - 1                                       # Get the sizes of the post-convolution array
         except:
-            sz = vol_sz + [len(psf), 1] -1
+            sz = vol_sz + [len(psf), 1] - 1
         sz = nearest_small_prime(sz,7)                                      # Make sure the largest factor is no larger than 7 (for fast FFTs)
         freq_psf = scipy.fft(scipy.fft(psf, sz[0], 1), sz[1], 2)                          # Get fft of psf
 
