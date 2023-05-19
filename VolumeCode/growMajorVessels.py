@@ -5,6 +5,7 @@ import vessel_dijkstra as vessel_dijkstra
 import pseudoRandSample2D as pseudoRandSample2D
 import delnode as delnode
 
+## imdilate, strel, and pos2dists functions in this file are not translated
 def growMajorVessels(nv, node_p, vp):
 
 # growMajorVessels(nv,np,vp)

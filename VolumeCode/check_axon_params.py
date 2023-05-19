@@ -3,7 +3,7 @@ import sys
 import inspect
 
 # adding misc folder to the system path
-sys.path.insert(0, './misc')
+sys.path.insert(0, './Misc')
 from setParams import setParams
 
 def check_axon_params(axon_params):

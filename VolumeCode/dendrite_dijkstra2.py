@@ -1,5 +1,5 @@
 import numpy as np
-from dendrite_dijkstra_cpp import dendrite_dijkstra_cpp
+from dendrite_dijkstra_cpp import dendrite_dijkstra_cpp ## C++ function here, it needs to be handled by either pybind11 or ctypes
 def dendrite_dijkstra2(M, dims, root):
 
 # function dendrite_dijkstra2(M,dims,root)
@@ -34,6 +34,7 @@ def dendrite_dijkstra2(M, dims, root):
     e  = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]])                        # Set the adjacent edges to loop through: R L U D T B (right/left/up/down/towards/back)
     pe = e*np.array([[1],[dims[0]],[dims[0]*dims[1]]])                                        # Set distance based on dimensions of the volumes
 
+    #### C++ function here, the C++ function needs to be translated using either cytpes or pybind11
     [distance,pathfrom_tmp] = dendrite_dijkstra_cpp(M,pe.astype(np.int32),root2.astype(np.int32)) # Run the mexed dijkstra algorithm for speed
 
     distance  = np.reshape(distance,dims)                                        # Reshape outputs to the size of the volume
